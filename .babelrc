@@ -1,0 +1,11 @@
+{
+  "presets": ["env", "flow"],
+  "plugins": [
+    [
+      "inline-dotenv",
+      {
+        "path": ".env"
+      }
+    ]
+  ]
+}
