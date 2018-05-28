@@ -2,13 +2,7 @@ import express from "express";
 import cors from "cors";
 import { graphqlExpress, graphiqlExpress } from "apollo-server-express";
 import bodyParser from "body-parser";
-import schema from "./schema";
-import mongoose from "mongoose";
-import bluebird from "bluebird"; //better promises
-mongoose.Promise = bluebird; // replase promise
-
-mongoose.connect("mongodb://localhost/apis");
-console.info("Mongoose state", mongoose.connection.readyState);
+import schema from "./db";
 const GRAPHQL_PORT = process.env.PORT || 3000;
 
 const graphQLServer = express();
