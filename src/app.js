@@ -3,7 +3,7 @@ import cors from "cors";
 import { graphqlExpress, graphiqlExpress } from "apollo-server-express";
 import bodyParser from "body-parser";
 import schema from "./db";
-const GRAPHQL_PORT = process.env.PORT || 3000;
+const GRAPHQL_PORT = process.env.PORT || 4000;
 
 const graphQLServer = express();
 graphQLServer.use(cors());
