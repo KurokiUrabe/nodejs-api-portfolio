@@ -1,9 +1,10 @@
-import { createEmployer } from "./mutationResolvers";
+import { createEmployer, updateEmployer } from "./mutationResolvers";
 
 module.exports = {
   Mutation: {
-    createEmployer
+    createEmployer,
     // currentEmployer,
     // searchEmployers
+    updateEmployer
   }
 };
