@@ -27,3 +27,16 @@ export const updateEmployer = (root, args) => {
       console.error(err);
     });
 };
+
+export const updateEmployer = (root, args) => {
+  const data = args.dataEmployer;
+
+  employerModel
+    .update({ _id: data._id }, data)
+    .exec()
+    .then(doc => doc)
+    .catch(err => {
+      console.error(err);
+    });
+  return data;
+};
