@@ -1,5 +1,5 @@
 // @flow
-import { user, users } from "./user";
+import { user, users, validateCredential } from "./user";
 // import currentUser from "./rootCurrentUser";
 // import searchUsers from "./rootSearchUsers";
 // import email from "./email";
@@ -23,7 +23,8 @@ import { user, users } from "./user";
 module.exports = {
   Query: {
     user,
-    users
+    users,
+    validateCredential
     // searchUsers
   }
   // ,
