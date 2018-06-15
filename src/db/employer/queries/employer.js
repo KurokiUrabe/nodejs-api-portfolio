@@ -1,5 +1,5 @@
 import employerModel from "../employerModel";
-export const employer = (_, { _id }) => {
+export const getEmployer = (_, { _id }) => {
   return employerModel
     .findById(_id)
     .exec()

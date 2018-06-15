@@ -1,6 +1,6 @@
 const typeDefs = `
   type Query {
-    employer(_id:String):Employer
+    getEmployer(_id:String):Employer
     allEmployers:[Employer]
   }
   type Mutation {
