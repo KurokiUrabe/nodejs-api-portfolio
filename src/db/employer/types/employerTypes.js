@@ -4,12 +4,18 @@ const typeDefs = `
     allEmployers:[Employer]
   }
   type Mutation {
-    createEmployer(
-      name:String,
-      employername:String,
-      password:String
-    ): Employer
+    createEmployer(input: inputEmployee): Employer
+    updateEmployer(_id:String,input: inputEmployee): Employer
   }
+
+  input inputEmployee{
+    jobTitle:String
+    company:String
+    description:String
+    period: inputPeriod
+  
+  }
+  
   type Employer {
     _id: String
     jobTitle: String
@@ -17,6 +23,10 @@ const typeDefs = `
     description: String
     period: Period
    }
+   input inputPeriod {
+    start:String
+    end:String
+  }
    type Period {
      start:String
      end:String
