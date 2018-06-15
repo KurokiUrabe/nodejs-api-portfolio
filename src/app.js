@@ -32,18 +32,6 @@ graphQLServer.use(
   })
 );
 
-// graphQLServer.use(
-//   '/graphql',
-//   bodyParser.json(),
-//   ,
-//   graphqlExpress(req => ({
-//     schema: executableSchema,
-//     context: {
-//       user: req.user ?
-//         User.findOne({ where: { id: req.user.id } }) : Promise.resolve(null),
-//     },
-//   })
-// ));
 graphQLServer.use(
   "/graphql",
   bodyParser.json(),
