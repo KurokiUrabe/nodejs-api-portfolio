@@ -3,32 +3,34 @@ const typeDefs = `
     user(_id:String):User
     users:[User]
     testString: String
+    validateCredential(data:Credential): String 
   }
+  input Credential {
+    username:String
+    password:String
+  }
+  
   type Mutation {
-    createUser(name:String, username:String, password:String): User
+    createUser(data:dataUser): User
+  }
+  input dataUser {
+    name:String
+    email:String
+    username:String
+    password:String
+    email: String
+    admin: Boolean
+    location: String
   }
   type User {
     _id: String
     name: String
     username:String
-    password: String
+    email: String
+    admin: Boolean
+    location: String
    }
  
 `;
 
 export default typeDefs;
-
-// type User {
-//   name: String,
-//   username: String,
-//   password: String,
-//   admin: Boolean,
-//   location: String,
-//   meta: Meta,
-//   created_at: String,
-//   updated_at: String
-// }
-// type Meta {
-//   age: Int,
-//   website: String
-// }

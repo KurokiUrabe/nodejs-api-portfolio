@@ -1,14 +1,12 @@
 import * as mongoose from "mongoose";
 import userModel from "../userModel";
-import bluebird from "bluebird";
-mongoose.Promise = bluebird;
-
-//`Hola pinche putita X${count}`;
+// import bluebird from "bluebird";
+// mongoose.Promise = bluebird;
 
 export const createUser = (root, args) => {
-  console.info(args);
+  console.info(args.data);
   return userModel
-    .create(args)
+    .create(args.data)
     .then(doc => {
       return doc;
     })
