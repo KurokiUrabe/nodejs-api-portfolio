@@ -28,15 +28,15 @@ export const updateEmployer = (root, args) => {
     });
 };
 
-export const updateEmployer = (root, args) => {
-  const data = args.dataEmployer;
+// export const updateEmployer = (root, args) => {
+//   const data = args.dataEmployer;
 
-  employerModel
-    .update({ _id: data._id }, data)
-    .exec()
-    .then(doc => doc)
-    .catch(err => {
-      console.error(err);
-    });
-  return data;
-};
+//   employerModel
+//     .update({ _id: data._id }, data)
+//     .exec()
+//     .then(doc => doc)
+//     .catch(err => {
+//       console.error(err);
+//     });
+//   return data;
+// };
