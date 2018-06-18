@@ -19,15 +19,18 @@ import UserError from "./utils/UserError";
 
 import { userSchema, userQueries, userMutations } from "./user";
 import { employerSchema, employerQueries, employerMutations } from "./employer";
+import { productSchema, productQueries, productMutations } from "./product";
 
 const resolvers = merge(
   {},
   //queries
   userQueries,
   employerQueries,
+  productQueries,
   // mutations
   userMutations,
-  employerMutations
+  employerMutations,
+  productMutations
   // subscriptions
 );
 
@@ -38,7 +41,7 @@ if (process.env.NODE_ENV === "development" && debug.enabled) {
 // Create the final GraphQL schema out of the type definitions
 // and the resolvers
 const schema = mergeSchemas({
-  schemas: [userSchema, employerSchema]
+  schemas: [userSchema, employerSchema, productSchema]
 });
 addResolveFunctionsToSchema({ schema, resolvers });
 
