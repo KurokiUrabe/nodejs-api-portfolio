@@ -1,8 +1,9 @@
-import { createUser } from "./mutationResolvers";
+import { createUser, updateUser } from "./mutationResolvers";
 
 module.exports = {
   Mutation: {
-    createUser
+    createUser,
+    updateUser
     // currentUser,
     // searchUsers
   }

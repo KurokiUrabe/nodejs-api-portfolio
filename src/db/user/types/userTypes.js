@@ -12,6 +12,7 @@ const typeDefs = `
   
   type Mutation {
     createUser(data:dataUser): User
+    updateUser(_id:String,data:dataUser): User
   }
   input dataUser {
     name:String
