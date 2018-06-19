@@ -4,13 +4,23 @@ var Schema = mongoose.Schema;
 
 const productSchema = new Schema(
   {
-    jobTitle: String,
-    company: String,
+    name: String,
+    rating: Number,
+    start: String,
     description: String,
-    period: {
-      start: String,
-      end: String
-    }
+    measueres: {
+      weight: Number,
+      large: Number,
+      height: Number,
+      width: Number
+    },
+    price: {
+      net: Number,
+      brute: Number
+    },
+    salient_point: [String],
+    brand: String,
+    img: String
   },
   { collection: "product" }
 );

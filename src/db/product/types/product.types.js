@@ -1,7 +1,7 @@
 const typeDefs = `
   type Query {
     getProduct(_id:String):Product
-    allProducts:[Product]
+    allProducts(limit:Int,skip:Int):[Product]
   }
   type Mutation {
     createProduct(input: inputProduct): Product
@@ -30,6 +30,7 @@ const typeDefs = `
     brute: Float
   }
   type Product{
+    _id: String
     name: String
     rating: Int
     start: String
