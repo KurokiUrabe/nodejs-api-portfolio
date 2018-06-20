@@ -3,7 +3,6 @@ const typeDefs = `
     user(_id:String):User
     users:[User]
     testString: String
-    validateCredential(data:Credential): String 
   }
   input Credential {
     username:String
@@ -13,6 +12,7 @@ const typeDefs = `
   type Mutation {
     createUser(data:dataUser): User
     updateUser(_id:String,data:dataUser): User
+    getSessionToken(data: Credential): String 
   }
   input dataUser {
     name:String

@@ -1,7 +1,6 @@
 import * as mongoose from "mongoose";
 import userModel from "../userModel";
-// import bluebird from "bluebird";
-// mongoose.Promise = bluebird;
+import * as authentication from "../../utils/authentication";
 
 export const createUser = (root, args) => {
   console.info(args.data);
@@ -28,3 +27,25 @@ export const updateUser = (root, args) => {
       console.error(err);
     });
 };
+
+export const getSessionToken = (_, { data }) => {
+  const username = data.username;
+  const password = data.password;
+  return userModel.findOne({ username: username }).then();
+};
+
+/* , function(err, user) {
+    if (err) throw err;
+    console.log(user);
+    
+    if (!user) {
+      // Return if user not found in database
+      return {
+        message: "User not found"
+      };
+    }
+
+    user.comparePassword("password", function(err, isMatch) {
+      if (err) throw err;
+      console.log("password:", isMatch); // -> Password123: true
+    });} */

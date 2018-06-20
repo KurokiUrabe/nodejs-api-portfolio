@@ -20,23 +20,3 @@ export const users = () => {
     })
     .catch(console.error);
 };
-
-export const validateCredential = (_, { data }) => {
-  const username = data.username;
-  const password = data.password;
-  return userModel.findOne({ username: username }, function(err, user) {
-    if (err) throw err;
-
-    if (!user) {
-      // Return if user not found in database
-      return {
-        message: "User not found"
-      };
-    }
-
-    user.comparePassword("password", function(err, isMatch) {
-      if (err) throw err;
-      console.log("password:", isMatch); // -> Password123: true
-    });
-  });
-};

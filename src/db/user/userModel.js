@@ -1,6 +1,6 @@
 // The User model
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+
 var Schema = mongoose.Schema;
 
 const SALT_WORK_FACTOR = 10;
@@ -59,23 +59,13 @@ userSchema.pre("save", function(next) {
   });
 });
 
-userSchema.methods.comparePassword = function(candidatePassword, callback) {
-  var user = this;
-  bcrypt.compare(candidatePassword, user.password, function(err, isMatch) {
-    // Prevent conflict btween err and isMatch
-    if (err) return callback(err, null);
-    callback(null, isMatch);
-  });
-};
-userSchema.methods.comparePasswordOld = function(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
-};
-
-userSchema.method("meow", function() {
-  console.log("meeeeeoooooooooooow");
-});
+// userSchema.methods.comparePassword = function(candidatePassword, callback) {
+//   var user = this;
+//   bcrypt.compare(candidatePassword, user.password, function(err, isMatch) {
+//     // Prevent conflict btween err and isMatch
+//     if (err) return callback(err, null);
+//     callback(null, isMatch);
+//   });
+// };
 
 export default mongoose.model("user", userSchema);
