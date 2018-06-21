@@ -1,5 +1,6 @@
 // The User model
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 var Schema = mongoose.Schema;
 
@@ -37,35 +38,35 @@ const userSchema = new Schema(
 );
 
 userSchema.pre("save", function(next) {
-  var user = this;
-  console.log(35, user.password);
+  if (!this.password) next();
+  let password = this.password;
 
-  // only hash the password if it has been modified (or is new)
-  if (!user.isModified("password")) return next();
+  var salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+  var hash = bcrypt.hashSync(password, salt);
 
-  // generate a salt
-  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-    if (err) return next(err);
-
-    // hash the password along with our new salt
-    bcrypt.hash(user.password, salt, function(err, hash) {
-      if (err) return next(err);
-      console.log(user.password, hash);
-
-      // override the cleartext password with the hashed one
-      user.password = hash;
-      next();
-    });
-  });
+  this.password = hash;
+  next();
 });
 
-// userSchema.methods.comparePassword = function(candidatePassword, callback) {
-//   var user = this;
-//   bcrypt.compare(candidatePassword, user.password, function(err, isMatch) {
-//     // Prevent conflict btween err and isMatch
-//     if (err) return callback(err, null);
-//     callback(null, isMatch);
-//   });
-// };
+userSchema.pre("update", function(next) {
+  let password = this._update["$set"].password;
 
+  if (!password) next();
+
+  var salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+  var hash = bcrypt.hashSync(password, salt);
+
+  this._update["$set"].password = hash;
+  next();
+});
+
+// userSchema.method('comparePassword', function(candidatePassword, cb) {
+//   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+//       if (err) return cb(err);
+//       cb(null, isMatch);
+//   });
+// });
+userSchema.method("meow", function() {
+  console.log("meeeeeoooooooooooow");
+});
 export default mongoose.model("user", userSchema);

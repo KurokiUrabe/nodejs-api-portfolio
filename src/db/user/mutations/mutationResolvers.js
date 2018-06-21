@@ -16,36 +16,16 @@ export const createUser = (root, args) => {
 
 export const updateUser = (root, args) => {
   return userModel
-    .findByIdAndUpdate(args._id, { $set: args.data }, { new: true })
-    .exec()
-    .then(doc => {
-      if (doc) {
-        return doc;
-      }
-    })
-    .catch(err => {
-      console.error(err);
-    });
+    .update({ _id: args._id }, { $set: args.data })
+    .then(() => userModel.findById(args._id));
 };
 
 export const getSessionToken = (_, { data }) => {
   const username = data.username;
   const password = data.password;
-  return userModel.findOne({ username: username }).then();
+  console.log("meow", userModel);
+
+  userModel.meow();
+
+  return null;
 };
-
-/* , function(err, user) {
-    if (err) throw err;
-    console.log(user);
-    
-    if (!user) {
-      // Return if user not found in database
-      return {
-        message: "User not found"
-      };
-    }
-
-    user.comparePassword("password", function(err, isMatch) {
-      if (err) throw err;
-      console.log("password:", isMatch); // -> Password123: true
-    });} */
