@@ -5,6 +5,10 @@ import bcrypt from "bcrypt";
 var Schema = mongoose.Schema;
 
 const SALT_WORK_FACTOR = 10;
+// these values can be whatever you want - we're defaulting to a
+// max of 5 attempts, resulting in a 2 hour lock
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCK_TIME = 2 * 60 * 60 * 1000;
 
 // Funcion para validar email
 const validateEmail = email =>
@@ -32,13 +36,147 @@ const userSchema = new Schema(
     meta: {
       age: Number,
       website: String
-    }
+    },
+    loginAttempts: { type: Number, required: true, default: 0 },
+    lockUntil: { type: Number }
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
+// define
+const reasons = {
+  NOT_FOUND: 0,
+  PASSWORD_INCORRECT: 1,
+  MAX_ATTEMPTS: 2
+};
+userSchema.statics.failedLogin = reasons;
+userSchema.statics.getAuthenticated = function(username, password, cb) {
+  this.findOne({ username: username }, function(err, user) {
+    if (err) return cb(err);
+
+    // make sure the user exists
+    if (!user) {
+      return cb(null, null, reasons.NOT_FOUND);
+    }
+
+    // check if the account is currently locked
+    if (user.isLocked) {
+      // just increment login attempts if account is already locked
+      return user.incLoginAttempts(function(err) {
+        if (err) return cb(err);
+        return cb(null, null, reasons.MAX_ATTEMPTS);
+      });
+    }
+
+    // test for a matching password
+    user.comparePassword(password, function(err, isMatch) {
+      if (err) return cb(err);
+
+      // check if the password was a match
+      if (isMatch) {
+        // if there's no lock or failed attempts, just return the user
+        if (!user.loginAttempts && !user.lockUntil) return cb(null, user);
+        // reset attempts and lock info
+        var updates = {
+          $set: { loginAttempts: 0 },
+          $unset: { lockUntil: 1 }
+        };
+        return user.update(updates, function(err) {
+          if (err) return cb(err);
+          return cb(null, user);
+        });
+      }
+
+      // password is incorrect, so increment login attempts before responding
+      user.incLoginAttempts(function(err) {
+        if (err) return cb(err);
+        return cb(null, null, reasons.PASSWORD_INCORRECT);
+      });
+    });
+  });
+};
+userSchema.statics.gatoTote = function(username, password) {
+  return this.findOne({ username: username }).then(genToken);
+};
+
+const genToken = user => {
+  console.info("espera", user);
+  if (user) {
+    user.comparePassword(password, function(err, isMatch) {
+      if (err) return cb(err);
+
+      // check if the password was a match
+      if (isMatch) {
+        // if there's no lock or failed attempts, just return the user
+        if (!user.loginAttempts && !user.lockUntil) return cb(null, user);
+        // reset attempts and lock info
+        var updates = {
+          $set: { loginAttempts: 0 },
+          $unset: { lockUntil: 1 }
+        };
+        return user.update(updates, function(err) {
+          if (err) return cb(err);
+          return cb(null, user);
+        });
+      }
+
+      // password is incorrect, so increment login attempts before responding
+      user.incLoginAttempts(function(err) {
+        if (err) return cb(err);
+        return cb(null, null, reasons.PASSWORD_INCORRECT);
+      });
+    });
+  }
+};
+
+userSchema.statics.getAuthenticatedSync = function(username, password, cb) {
+  this.findOne({ username: username }).then(user => {
+    // make sure the user exists
+    if (!user) {
+      return rej(reasons.NOT_FOUND);
+    }
+
+    // check if the account is currently locked
+    if (user.isLocked) {
+      // just increment login attempts if account is already locked
+      return user.incLoginAttempts(function(err) {
+        if (err) return cb(err);
+        return cb(null, null, reasons.MAX_ATTEMPTS);
+      });
+    }
+
+    // test for a matching password
+    user.comparePassword(password).then(function(isMatch) {
+      console.log(isMatch);
+    });
+  });
+};
+
+userSchema.virtual("isLocked").get(function() {
+  // check for a future lockUntil timestamp
+  return !!(this.lockUntil && this.lockUntil > Date.now());
+});
+
+userSchema.methods.incLoginAttempts = function(user) {
+  return new Promise((res, rej) => {
+    let updates = {};
+    if (user.lockUntil && user.lockUntil < Date.now()) {
+      updates = {
+        $inc: { loginAttempts: 1 },
+        $unset: { lockUntil: 1 }
+      };
+    }
+    // otherwise we're incrementing
+    updates = { $inc: { loginAttempts: 1 } };
+    // lock the account if we've reached max attempts and it's not locked already
+    if (user.loginAttempts + 1 >= MAX_LOGIN_ATTEMPTS && !user.isLocked) {
+      updates.$set = { lockUntil: Date.now() + LOCK_TIME };
+    }
+    res(user.update(updates));
+  });
+};
 
 userSchema.pre("save", function(next) {
-  if (!this.password) next();
+  if (!user.password) next();
   let password = this.password;
 
   var salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
@@ -60,12 +198,15 @@ userSchema.pre("update", function(next) {
   next();
 });
 
-// userSchema.method('comparePassword', function(candidatePassword, cb) {
-//   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-//       if (err) return cb(err);
-//       cb(null, isMatch);
-//   });
-// });
+userSchema.method("comparePasswordSync", function(candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) return cb(err);
+    cb(null, isMatch);
+  });
+});
+userSchema.method("comparePassword", function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+});
 userSchema.method("meow", function() {
   console.log("meeeeeoooooooooooow");
 });
