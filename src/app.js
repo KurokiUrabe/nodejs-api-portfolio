@@ -4,7 +4,7 @@ import { graphqlExpress, graphiqlExpress } from "apollo-server-express";
 import jwt from "express-jwt";
 import bodyParser from "body-parser";
 import schema from "./db";
-
+const JWT_SECRET = process.env.JWT_SECRET;
 const GRAPHQL_PORT = process.env.PORT || 4000;
 
 const graphQLServer = express();
@@ -26,7 +26,7 @@ const authMiddleware = jwt({
 graphQLServer.use(
   "/graphql",
   jwt({
-    secret: "shhhhhhared-secret",
+    secret: JWT_SECRET,
     requestProperty: "auth",
     credentialsRequired: false
   })
@@ -36,7 +36,7 @@ graphQLServer.use(
   "/graphql",
   bodyParser.json(),
   graphqlExpress(req => {
-    console.log(">>> graphql.user", req.user);
+    // console.log(">>> graphql.user", req.user);
     return { schema };
   })
 );
