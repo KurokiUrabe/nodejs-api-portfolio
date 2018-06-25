@@ -1,7 +1,9 @@
 // The User model
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+// import secureRandom from "secure-random";
 
+import jwt from "jsonwebtoken";
 var Schema = mongoose.Schema;
 
 const SALT_WORK_FACTOR = 10;
@@ -94,39 +96,57 @@ userSchema.statics.getAuthenticated = function(username, password, cb) {
     });
   });
 };
+
 userSchema.statics.gatoTote = function(username, password) {
-  return this.findOne({ username: username }).then(genToken);
+  let supapass = password;
+  return this.findOne({ username: username }).then(user => {
+    if (user) {
+      return user.comparePassword(password).then(isMatch => {
+        if (!isMatch) return false;
+        return genToken(user, password);
+      });
+    }
+    return false;
+  });
 };
 
-const genToken = user => {
-  console.info("espera", user);
-  if (user) {
-    user.comparePassword(password, function(err, isMatch) {
+const genToken = (user, password) => {
+  const token = jwt.sign(
+    {
+      id: user.id,
+      email: user.email
+    },
+    process.env.JWT_SECRET
+  );
+  return token;
+};
+
+/* const actionAfter = function(err, isMatch) {
+      
+  if (err) return cb(err);
+  console.log("compare password");
+  
+  // check if the password was a match
+  if (isMatch) {
+    // if there's no lock or failed attempts, just return the user
+    if (!user.loginAttempts && !user.lockUntil) return cb(null, user);
+    // reset attempts and lock info
+    var updates = {
+      $set: { loginAttempts: 0 },
+      $unset: { lockUntil: 1 }
+    };
+    return user.update(updates, function(err) {
       if (err) return cb(err);
-
-      // check if the password was a match
-      if (isMatch) {
-        // if there's no lock or failed attempts, just return the user
-        if (!user.loginAttempts && !user.lockUntil) return cb(null, user);
-        // reset attempts and lock info
-        var updates = {
-          $set: { loginAttempts: 0 },
-          $unset: { lockUntil: 1 }
-        };
-        return user.update(updates, function(err) {
-          if (err) return cb(err);
-          return cb(null, user);
-        });
-      }
-
-      // password is incorrect, so increment login attempts before responding
-      user.incLoginAttempts(function(err) {
-        if (err) return cb(err);
-        return cb(null, null, reasons.PASSWORD_INCORRECT);
-      });
+      return cb(null, user);
     });
   }
-};
+
+  // password is incorrect, so increment login attempts before responding
+  user.incLoginAttempts(function(err) {
+    if (err) return cb(err);
+    return cb(null, null, reasons.PASSWORD_INCORRECT);
+  });
+}; */
 
 userSchema.statics.getAuthenticatedSync = function(username, password, cb) {
   this.findOne({ username: username }).then(user => {
@@ -145,9 +165,7 @@ userSchema.statics.getAuthenticatedSync = function(username, password, cb) {
     }
 
     // test for a matching password
-    user.comparePassword(password).then(function(isMatch) {
-      console.log(isMatch);
-    });
+    user.comparePassword(password).then(isMatch => isMatch);
   });
 };
 
@@ -198,11 +216,8 @@ userSchema.pre("update", function(next) {
   next();
 });
 
-userSchema.method("comparePasswordSync", function(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
+userSchema.method("comparePasswordSync", function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 });
 userSchema.method("comparePassword", function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
