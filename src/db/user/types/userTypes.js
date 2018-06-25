@@ -1,7 +1,7 @@
 const typeDefs = `
   type Query {
     user(_id:String):User
-    users:[User]
+    users(jwt:String):[User]
     testString: String
   }
   input Credential {
