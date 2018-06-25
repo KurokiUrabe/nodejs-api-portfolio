@@ -26,9 +26,8 @@ export const updateUser = (root, args) => {
 export const getSessionToken = (_, { data }) => {
   const username = data.username;
   const password = data.password;
-  const token = userModel.gatoTote(username, password).then(value => {
-    console.log(value);
-  });
+  const token = userModel.gatoTote(username, password);
+
   /*  userModel.getAuthenticatedSync(username,password)
   .then(function(err, user, reason) {
     if (err) throw err;
@@ -64,7 +63,6 @@ export const getSessionToken = (_, { data }) => {
             break;
     }
   }) */
-  console.log("token", token);
 
-  return null;
+  return token;
 };
