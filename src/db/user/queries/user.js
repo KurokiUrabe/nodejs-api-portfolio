@@ -11,7 +11,8 @@ export const user = (_, { _id }) => {
     })
     .catch(console);
 };
-export const users = () => {
+export const users = (_, { jwt }) => {
+  console.log(jwt);
   return userModel
     .find({})
     .exec()
