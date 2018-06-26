@@ -10,6 +10,7 @@ const typeDefs = `
   input inputProduct{
     name: String
     rating: Int
+    clave:String
     start: String
     description: String
     measueres: inputMeasures
@@ -33,6 +34,7 @@ const typeDefs = `
     _id: String
     name: String
     rating: Int
+    clave:String
     start: String
     description: String
     measueres:Measures

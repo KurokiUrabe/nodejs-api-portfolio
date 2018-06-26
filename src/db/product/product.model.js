@@ -7,6 +7,7 @@ const productSchema = new Schema(
     name: String,
     rating: Number,
     start: String,
+    clave: String,
     description: String,
     measueres: {
       weight: Number,
