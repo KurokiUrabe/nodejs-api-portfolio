@@ -7,53 +7,81 @@ const typeDefs = `
     createProduct(input: inputProduct): Product
     updateProduct(_id:String,input: inputProduct): Product
   }
-  input inputProduct{
-    name: String
-    rating: Int
-    clave:String
-    start: String
-    description: String
-    measueres: inputMeasures
-    price: inputPrice
-    salient_point:[String]
-    brand: String
-    img: String
-
-  }
-  input inputMeasures {
-    weight: Float
-    large: Float
-    height: Float
-    width: Float
-  }
-  input inputPrice {
-    net: Float
-    brute: Float
-  }
   type Product{
     _id: String
+    sku: String
+    clave: String
+    type: String
+    asin: String
+    name: String
+    rating: Int
+    start: String
+    description: String
+    shipping:Shipping
+    pricing: Pricing
+    brand: String
+    img: String
+    detail: Detail
+  }
+  input inputProduct {
     name: String
     rating: Int
     clave:String
     start: String
     description: String
-    measueres:Measures
-    price:Price
+    shipping: inputShipping
+    pricing: inputPricing
     salient_point:[String]
     brand: String
     img: String
+    detail:inputDetail
 
   }
-  type Measures {
+  type Detail {
+    name:String
+    salient_point:[String]
+
+  }
+  input inputDetail {
+    name:String
+    salient_point:[String]
+
+  }
+  type Pricing {
+    list: Float
+    retail: Float
+    savings: Float
+    pct_savings: Float
+  }
+  input inputPricing {
+    list: Float
+    retail: Float
+    savings: Float
+    pct_savings: Float
+  }
+
+
+  type Shipping {
     weight: Float
-    large: Float
-    height: Float
+    dimensions: Dimensions
+  }
+  input inputShipping {
+    weight: Float
+    dimensions: inputDimensions
+  }
+  type Dimensions {
     width: Float
+      height: Float
+      depth: Float
   }
-  type Price {
-    net: Float
-    brute: Float
+  input inputDimensions {
+    width: Float
+      height: Float
+      depth: Float
   }
+
+
+  
 `;
 
 export default typeDefs;

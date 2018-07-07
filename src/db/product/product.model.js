@@ -8,18 +8,32 @@ const productSchema = new Schema(
     rating: Number,
     start: String,
     clave: String,
+    sku: String,
+    type: String,
+    asin: String,
     description: String,
-    measueres: {
+    shipping: {
       weight: Number,
-      large: Number,
-      height: Number,
-      width: Number
+      dimensions: {
+        width: Number,
+        height: Number,
+        depth: Number
+      }
+    },
+    pricing: {
+      list: Number,
+      retail: Number,
+      savings: Number,
+      pct_savings: Number
     },
     price: {
       net: Number,
       brute: Number
     },
-    salient_point: [String],
+    detail: {
+      title: String,
+      salient_point: [String]
+    },
     brand: String,
     img: String
   },
